@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MemoService } from '../memo/memo.service';
-import { IMemo } from '../memo/memo';
+import { IMemo, IKeyValuePair } from '../memo/memo';
+import { ModalController } from '@ionic/angular';
+import { EditMemoPage } from '../edit-memo/edit-memo.page';
+import { OverlayEventDetail } from '@ionic/core';
 
 @Component({
   selector: 'app-memo-list',
@@ -9,17 +12,50 @@ import { IMemo } from '../memo/memo';
 })
 export class MemoListPage implements OnInit {
 
-  constructor(public memoService: MemoService) { }
+  constructor(
+    public memoService: MemoService,
+    private modalController: ModalController
+  ) { }
 
   ngOnInit() {
   }
 
-  public createMemo() {
-    this.memoService.push('new memo');
+  public async createMemo() {
+    const modal: HTMLIonModalElement =
+      await this.modalController.create({
+        component: EditMemoPage,
+        componentProps: {
+          memo: undefined
+        }
+      });
+    modal.onDidDismiss().then((detail: OverlayEventDetail<IMemo>) => {
+      if (detail != null) {
+        console.log('The result:', detail.data);
+        this.memoService.push(detail.data);
+      }
+    });
+    await modal.present();
   }
 
-  public deleteMemo(memo: IMemo) {
-    this.memoService.remove(memo.key);
+  public async editMemo(selectedMemo: IKeyValuePair<IMemo>) {
+    const modal: HTMLIonModalElement =
+      await this.modalController.create({
+        component: EditMemoPage,
+        componentProps: {
+          memo: selectedMemo.value
+        }
+      });
+    modal.onDidDismiss().then((detail: OverlayEventDetail<IMemo>) => {
+      if (detail != null) {
+        console.log('The result:', detail.data);
+        this.memoService.set(selectedMemo.key, detail.data);
+      }
+    });
+    await modal.present();
+  }
+
+  public deleteMemo(memoKey: string) {
+    this.memoService.remove(memoKey);
   }
 
 }

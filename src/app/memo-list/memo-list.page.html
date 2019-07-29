@@ -11,27 +11,20 @@
 
 <ion-content>
   <ion-list *ngIf="(memoService.memos$ | async) as memos">
-    <ion-item-sliding *ngFor="let memo of memos">
-      <ion-item-options side="start">
-        <ion-item-option 
-          (click)="deleteMemo(memo)"
-          color="danger"
-          expandable
-        >
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-      <ion-item >
-        {{memo.content}}
-      </ion-item>
-    </ion-item-sliding>
-  </ion-list>
+    <ion-card 
+      *ngFor="let memo of memos"
+      (click)="editMemo(memo)"
+    >
+      <ion-card-header>
+        <ion-card-title>{{memo.value.title}}</ion-card-title>
+      </ion-card-header>
 
-  <ion-fab
-    (click)="createMemo()"
-    vertical="bottom"
-    horizontal="end"
-  >
+      <ion-card-content>
+        {{memo.value.content}}
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+  <ion-fab (click)="createMemo()" vertical="bottom" horizontal="end">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

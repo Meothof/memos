@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
-import { IMemo } from './memo';
+import { IMemo, IKeyValuePair } from './memo';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MemoService {
-  public readonly memos$: BehaviorSubject<IMemo[]>;
+  public readonly memos$: BehaviorSubject<IKeyValuePair<IMemo>[]>;
 
   constructor(private storage: Storage) {
     this.memos$ = new BehaviorSubject([]);
@@ -15,23 +15,32 @@ export class MemoService {
   }
 
   async fetchMemos() {
-    const keyValues = [];
-    await this.storage.forEach((v: any, k: string) => {
+    const keyValues: IKeyValuePair<IMemo>[]  = [];
+    await this.storage.forEach((v: IMemo, k: string) => {
       keyValues.push({
         key: k,
-        content: v
+        value: {
+          title: v.title,
+          content: v.content
+        }
       });
     });
     this.memos$.next(keyValues);
   }
 
-  async push(memoContent: any): Promise<IMemo> {
+  async set(key: string, updatedMemo: IMemo) {
+    this.storage.set(key, updatedMemo);
+  }
+
+  async push(memo: IMemo): Promise<IMemo> {
     const nextKey = await this.storage.length();
-    console.log(nextKey)
-    await this.storage.set(nextKey.toString(), memoContent);
-    const newMemo = {key: nextKey.toString(), content: memoContent} as IMemo;
+    const newMemo = {
+      key: nextKey.toString(),
+      value: memo
+    };
+    await this.storage.set(nextKey.toString(), memo);
     this.memos$.next([...this.memos$.value, newMemo]);
-    return Promise.resolve(newMemo);
+    return Promise.resolve(memo);
   }
 
   async remove(key: string) {

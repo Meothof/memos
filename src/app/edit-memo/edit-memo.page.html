@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Edit Memo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="submitForm()">
+    <ion-item>
+      <ion-label required>Title</ion-label>
+      <ion-input type="text" [(ngModel)]="memo.title" name="title"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Description</ion-label>
+      <ion-textarea [(ngModel)]="memo.content" name="description"></ion-textarea>
+    </ion-item>
+    <ion-button type="submit" expand="block">Save memo</ion-button>
+  </form>
+</ion-content>

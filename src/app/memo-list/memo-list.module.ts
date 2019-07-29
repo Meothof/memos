@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { MemoListPage } from './memo-list.page';
+import { EditMemoPageModule } from '../edit-memo/edit-memo.module';
 
 const routes: Routes = [
   {
@@ -19,7 +20,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    EditMemoPageModule
   ],
   declarations: [MemoListPage]
 })
